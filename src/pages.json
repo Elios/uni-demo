@@ -3,14 +3,88 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"enablePullDownRefresh": true
 			}
 		}
-	],
+        ,{
+            "path" : "pages/me/me",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/login/login",
+            "style" : {
+				"backgroundColor":"#BBBBBB",
+				"navigationBarTitleText":"登录"
+			}
+        },
+		{
+			"path":"pages/find-pwd/find-pwd",
+			"style":{
+				"backgroundColor":"#BBBBBB",
+				"navigationBarTitleText":"找回密码"
+			}
+		},
+		{
+			"path":"pages/reg/reg",
+			"style":{
+				"backgroundColor":"#BBBBBB",
+				"navigationBarTitleText":"注册"
+			}
+		},
+		{
+			"path":"pages/reg-pwd/reg-pwd",
+			"style":{
+				"backgroundColor":"#BBBBBB",
+				"navigationBarTitleText":""
+			}
+		}
+        ,{
+            "path" : "pages/video/video",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/chat/chat",
+            "style" : {}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTitleText":"Fio",
+		"navigationBarBackgroundColor": "#ffd4e4",
+		"backgroundColor": "hotpink"
+	},
+	"tabBar": {
+		"color":"#F76260",
+		"selectedColor":"#F762ff",
+		"list": [
+			{
+				"pagePath":"pages/index/index",
+				"iconPath":"static/tabBar/nav1.jpg",
+				"selectedIconPath":"static/tabBar/nav1-a.jpg",
+				"text":"Home"
+			},
+			{
+				"pagePath":"pages/chat/chat",
+				"iconPath":"static/tabBar/nav2.jpg",
+				"selectedIconPath":"static/tabBar/nav2-a.jpg",
+				"text":"Chat"
+			},
+			{
+				"pagePath":"pages/me/me",
+				"iconPath":"static/tabBar/nav3.png",
+				"selectedIconPath":"static/tabBar/nav3-a.png",
+				"text":"Me"
+			}
+		]
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
 	}
 }
