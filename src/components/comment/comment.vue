@@ -1,20 +1,29 @@
 <template>
-	<view class="content"  :data-commentid="comment.commentid" :data-uid="comment.uid">
-		<view class="author">
-			<view class="avatar">
-				<image :src="comment.avatar" mode="" size="mini"></image>
-			</view>
-			<view class="a-name">
-				{{comment.uname}}
+	<view class="content" :data-commentid="comment.commentid" :data-uid="comment.uid">
+		<view>
+			<view class="wrap-avatar">
+				<image :src="comment.avatar" mode="" size="mini" class="avatar"></image>
+				<view class="a-name">{{comment.uname}}</view>
 			</view>
 		</view>
 		<view class="comment">
 			{{comment.content}}
 		</view>
-		<view class="op-comment">
-			<fa-icon :type="thumbsUpIcon[thumbsUpIconIndex]" size="50upx" color="#c0c0c0" @tap="thumbsUp"></fa-icon>
-			<fa-icon :type="thumbsDownIcon[thumbsDownIconIndex]" size="50upx" color="#c0c0c0" @tap="thumbsDown"></fa-icon>
-			<fa-icon :type="commenting-o" size="50upx" color="#c0c0c0" @tap="comm"></fa-icon>
+		<view class="bottom">
+			<view class="c-date">
+				{{comment.c_date}}
+			</view>
+			<view class="op-comment">
+				<view class="">
+					<fa-icon :type="thumbsUpIcon[thumbsUpIconIndex]" size="18" color="#c0c0c0" @tap="thumbsUp"></fa-icon>
+				</view>
+				<view class="">
+					<fa-icon :type="thumbsDownIcon[thumbsDownIconIndex]" size="18" color="#c0c0c0" @tap="thumbsDown"></fa-icon>
+				</view>
+				<view class="">
+					<fa-icon type="commenting-o" size="18" color="#c0c0c0" @tap="comm"></fa-icon>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -45,7 +54,7 @@
 			comm(){
 				
 			}
-		},
+		}
 	}
 </script>
 

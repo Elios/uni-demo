@@ -1,6 +1,8 @@
 @import './common';
 .content{
 	.flex();
+	flex-direction: column;
+	margin-top: @marginTop;
 }
 .content::after{
 	content: '';
@@ -8,13 +10,35 @@
 	width: 100%;
 	background-color: rgba(0.5,0.5,0.5,0.1);
 }
-.author{
-	.flex();
-	justify-self: left;
-}
 .comment{
 	.self-right();
+	margin-top: @marginTop;
+	margin-left: 40upx;
+	margin-right: 10upx;
+	word-break: break-all;
+	background-color: #f8f8ff;
+	color: @fontColor;
 }
 .op-comment{
-	.self-right();
+	margin-top: @marginTop;
+	.flex();
+	justify-content: flex-end;
+	view{
+		margin-right: 5upx;
+	}
+}
+.bottom{
+	.flex();
+	justify-content: space-between; 
+	align-items: center;
+	.c-date{
+		margin-left: 40upx;
+		color: @fontColor;
+	}
+}
+.wrap-avatar{
+	padding-left: 10upx;
+	.a-name{
+		font-size: 35upx;
+	}
 }

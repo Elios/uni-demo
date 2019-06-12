@@ -4,7 +4,17 @@
 	width: 80upx;
 	height: 80upx;
 	border-radius: 80upx;
-	border: @borderBold;
+	border: @border;
+}
+
+.wrap-avatar{
+	.flex();
+	align-items: center;
+	.a-name{
+		font-size: 40upx;
+		color: @fontColor;
+		padding-left: 10upx;
+	}
 }
 
 .flex{
@@ -12,19 +22,19 @@
 }
 
 .self-right{
-	justify-self: right;
+	justify-self: flex-end;
 }
 
 .self-left{
-	justify-self: left;
+	justify-self: flex-start;
 }
 
 .content-left{
-	justify-content: left;
+	justify-content: flex-start;
 }
 
 .content-right{
-	justify-content: right;
+	justify-content: flex-end;
 }
 
 .wrap{

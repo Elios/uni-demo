@@ -20,14 +20,15 @@
 				<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" @change="change" @tap="tapImg">
 					<swiper-item v-for="item of bannerInfo" :key="item.vid">
 						<view class="swiper-item">
-							<image :src="item.imageUrl" mode="" :data-vid="item.vid"></image>
+							<image :src="item.poster" mode="" :data-vid="item.vid"></image>
 						</view>
 					</swiper-item>
 				</swiper>
 			</uni-swiper-dot>
 		</view>
 		<view class="vlist" @tap="tapImg">
-			<Preview v-for="(item, index) of vPreview" :key="index" :data-vid="item.vid" :imageUrl="item.imageUrl" :title="item.title" :uname="item.uname" :c_time="item.c_time" class="preview"></Preview>
+			<Preview v-for="(item, index) of vPreview" :key="index" :data-vid="item.vid" :imageUrl="item.poster" :title="item.title" :uname="item.uname" :c_time="item.c_time" class="preview"></Preview>
+			<uni-load-more :status="status" :content-text="contentText"></uni-load-more>
 		</view>
 	</view>
 </template>
@@ -40,9 +41,10 @@
 	import uniList from '../../components/uni-list/uni-list'
 	import uniListItem from '../../components/uni-list-item/uni-list-item'
 	import myAxios from '../../common/myAxios.js'
+	import uniLoadMore from '../../components/uni-load-more/uni-load-more'
 	let _this
 	export default {
-		components: {Preview, uniSwiperDot, uniNavBar, uniDrawer, uniList, uniListItem},
+		components: {Preview, uniSwiperDot, uniNavBar, uniDrawer, uniList, uniListItem, uniLoadMore},
 		data() {
 			return {
 				showDrawer: false,
@@ -55,7 +57,15 @@
 					backgroundColor: 'transparent',
 					border: 'none'
 				},
-				login: false
+				login: false,
+				status: 'more',
+				contentText: {
+					contentdown: '上拉加载更多',
+					contentrefresh: '少女折寿中....',
+					contentnomore: '再怎么加载也没有了'
+				},
+				pageSize: 10,
+				reload: false
 			}
 		},
 		methods: {
@@ -82,39 +92,47 @@
 			closeDrawer(){
 				this.showDrawer = false
 			},
-			getVResource(){
-				const p1 = myAxios({
+			getBanner(){
+				const p = myAxios({
 					url: _this.apiServer + 'video/banner/',
 					method: 'GET',
 					data: {}
 				}).then((res) => {
-					_this.bannerInfo = res.data
+					_this.bannerInfo = res.data.banner
 				}).catch((e) => {
-					console.log(e)
+					throw e
 				})
-				const p2 = myAxios({
-					url: _this.apiServer + 'video/list/',
+				return p
+			},
+			getList(){
+				if(!this.reload){
+					this.status = 'loading'
+				}
+				const p = myAxios({
+					url: _this.apiServer + 'video/list/' + _this.pageSize,
 					method: 'GET',
 					data: {}
 				}).then((res) => {
-					_this.vPreview = res.data
+					const list = res.data.list
+					_this.vPreview = _this.reload ? list : _this.vPreview.concat(list)
+					_this.reload = false
 				}).catch((e) => {
-					console.log(e)
+					throw e
 				})
-				return Promise.all([p1, p2])
+				return p
 			}
 		},
 		onPullDownRefresh: () => {
 			// 下拉刷新时获取视频信息
-			_this.getVResource()
+			_this.reload = true
+			Promise.all([_this.getBanner(), _this.getList()])
 				.then((res) => {
-					console.log("获取成功")
+					uni.stopPullDownRefresh()
+					plus.nativeUI.toast('获取成功')
 				})
 				.catch((e) => {
-					console.log("失败")
-				})
-				.finally(() => {
 					uni.stopPullDownRefresh()
+					plus.nativeUI.toast('获取视频信息失败')
 				})
 		},
 		onBackPress: () => {
@@ -133,16 +151,20 @@
 			if(uid && signature && uname){
 				this.login = true
 			}
-			_this.getVResource()
+			Promise.all([_this.getBanner(), _this.getList()])
 				.then((res) => {
-					console.log("获取成功")
+					plus.nativeUI.toast('获取成功')
 				})
 				.catch((e) => {
-					console.log("失败")
+					plus.nativeUI.toast('获取视频信息失败')
 				})
 		},
 		onShow() {
 			
+		},
+		onReachBottom(){
+			this.status = 'more'
+			this.getList()
 		}
 	}
 </script>

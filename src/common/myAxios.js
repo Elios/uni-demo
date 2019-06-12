@@ -7,8 +7,8 @@ export default async function({url, method = 'GET', data = {}} = {}) {
 			success: res => {
 				resolve(res)
 			},
-			fail: () => {
-				reject(new Error('获取数据失败'))
+			fail: (e) => {
+				reject(e)
 			}
 		})
 	})

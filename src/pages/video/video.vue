@@ -12,11 +12,11 @@
 			</view>
 		</view>
 		<view class="vlist-and-comments">
-			<wuc-tab :tab-list="tabList" :tabCur.sync="tabCur" :tabClass="tabClass" :selectClass="selectClass" @change="tabChange" textFlex></wuc-tab>
+			<wuc-tab :tab-list="tabList" :tabCur.sync="tabCur" @change="tabChange" textFlex></wuc-tab>
 			<swiper :duration="300" :current="tabCur" @change="swiperChange" class="swiper">
-				<swiper-item>
+				<swiper-item style="height: 1050px;">
 					<view class="swiper-item">
-						<view class="uname">
+						<view class="uname" style="height: 40px;">
 							<view class="wrap-avatar">
 								<image :src="vInfo.avatar" mode="" class="avatar"></image>
 								<view class="a-name">{{vInfo.uname}}</view>
@@ -32,15 +32,15 @@
 								</button>
 							</view>
 						</view>
-						<view class="vinfo">
+						<view class="vinfo" style="height: 10%;">
 							<video-info :uname="vInfo.uname" :c-date="vInfo.c_date" :des="vInfo.des" :title="vInfo.title"></video-info>
 						</view>
-						<view class="tags">
+						<view class="tags" style="height: 10%;">
 							<view class="tag" v-for="(item, index) of tags" :key="index">
 								<uni-tag :text="item" type="pink" :circle="true" :inverted="true"></uni-tag>
 							</view>
 						</view>
-						<view class="video-op">
+						<view class="video-op" style="height: 50px;">
 							<view class="thumbs-up">
 								<fa-icon :type="thumbsUpIcon[thumbsUpIconIndex]" size="31" color="#b85798" @tap="thumbsUp"></fa-icon>
 								<view class="">赞</view>
@@ -61,13 +61,14 @@
 						<view class="video-list" @tap="tapVImage">
 							<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(item,index) in vList" :key="index">
 								<view class="uni-media-list" :data-vid="item.vid">
-									<image class="uni-media-list-logo" :src="item.img"></image>
+									<image class="uni-media-list-logo" :src="item.poster"></image>
 									<view class="uni-media-list-body">
 										<view class="uni-media-list-text-top">{{item.title}}</view>
 										<view class="uni-media-list-text-bottom uni-ellipsis">{{item.uname}}</view>
 									</view>
 								</view>
 							</view>
+							<uni-load-more :status="status" :content-text="contentText"></uni-load-more>
 						</view>
 					</view>
 				</swiper-item>
@@ -90,10 +91,45 @@
 	import ImageMenu from '../../components/image-menu/image-menu'
 	import uniTag from '../../components/uni-tag/uni-tag'
 	import comment from '../../components/comment/comment'
+	import uniLoadMore from '../../components/uni-load-more/uni-load-more'
 	import myAxios from '../../common/myAxios.js'
 	let _this
+	let inputView = new plus.nativeObj.View('inputView', {
+		bottom: '0px',
+		left: '0px',
+		width: '100%',
+		height: '40px',
+		backgroundColor: 'rgb(255,255,255)'
+	})
+	inputView.drawInput({
+		bottom: '0px',
+		left: '0px',
+		width: '80%',
+		height: '100%'
+	},{
+		fontSize: '15px',
+		placeholder: '河蟹评论',
+		borderColor: '#ff69b4'
+	}, 'input-comment')
+	inputView.drawRect({
+		color: '#ff69b4'
+	}, {
+		bottom: '0px',
+		left: '80%',
+		width: '20%',
+		height: '100%'
+	})
+	inputView.drawText('评论', {
+		bottom: '10px',
+		left: '85%',
+		width: '10%',
+		height: '20px'
+	}, {
+		size: '20px',
+		color: '#ffffff'
+	})
 	export default {
-		components:{WucTab, VideoInfo, ImageMenu, uniTag, comment},
+		components:{WucTab, VideoInfo, ImageMenu, uniTag, comment, uniLoadMore},
 		data() {
 			return {
 				src: '', //视频资源地址
@@ -104,8 +140,6 @@
 					{name: '评论'}
 				],
 				tabCur: 0,
-				tabClass: '',
-				selectClass: '',
 				vInfo: {}, //视频信息
 				vList: [], //视频列表
 				thumbsUpIcon: ['thumbs-o-up', 'thumbs-up'], //点赞图片
@@ -120,7 +154,15 @@
 				strShareImageUrl: '', //分享图片地址
 				tags: [], //视频标签
 				isSub: false,
-				comments: []
+				comments: [],
+				pageSize: 10,
+				reload: false,
+				status: 'more',
+				contentText: {
+					contentdown: '上拉加载更多',
+					contentrefresh: '少女折寿中....',
+					contentnomore: '再怎么加载也没有了'
+				}
 			}
 		},
 		methods: {
@@ -136,6 +178,11 @@
 			},
 			swiperChange(e){
 				this.tabCur = e.target.current
+				if(this.tabCur === 1){
+					inputView.show()
+				}else{
+					inputView.hide()
+				}
 				if(this.tabCur === 1 && this.comments.length < 1){
 					console.log("swiperChange")
 					this.getComments()
@@ -146,17 +193,14 @@
 					dataset:true
 				}, (res) => {
 					const vid = res.dataset.vid
-					uni.request({
+					myAxios({
 						url: _this.apiServer + 'comment/' + vid,
 						method: 'GET',
-						data: {},
-						success: res => {
-							_this.comments = res.data
-						},
-						fail: () => {
-							console.log('err')
-						},
-						complete: () => {}
+						data: {}
+					}).then((res) => {
+						_this.comments = res.data.comments
+					}).catch((e) => {
+						plus.nativeUI.toast('获取评论失败')
 					})
 				}).exec()
 			},
@@ -205,71 +249,72 @@
 						method: 'GET'
 					}).then((res) => {
 						console.log(res.data.danmuList)
-						_this.danmuList = res.data.danmuList
+						if(res.statusCode === 200){
+							_this.danmuList = res.data.danmuList
+						}
 					}).catch((e) => {
 						console.log(e)
 					})
 				}).exec()
+			},
+			getList(){
+				if(!this.reload){
+					this.status = 'loading'
+				}
+				const p = myAxios({
+					url: _this.apiServer + 'video/list/' + _this.pageSize,
+					method: 'GET',
+					data: {}
+				}).then((res) => {
+					if(res.statusCode === 200){
+						const list = res.data.list
+						_this.vList = _this.reload ? list : _this.vList.concat(list)
+					}
+					_this.reload = false
+				}).catch((e) => {
+					throw e
+				})
+				return p
+			},
+			getVideo(vid){
+				const p = myAxios({
+					url: _this.apiServer + 'video/' + vid,
+					method: 'GET',
+					data: {}
+				}).then((res) => {
+					if(res.statusCode === 200){
+						_this.vInfo = res.data.vInfo
+					}
+				}).catch((e) => {
+					throw e
+				})
+				return p
+			},
+			getTags(vid){
+				myAxios({
+					url: _this.apiServer + 'video/tags/' + vid,
+					method: 'GET',
+					data: {}
+				}).then((res) => {
+					if(res.statusCode === 200){
+						_this.tags = res.data.tags
+					}
+				}).catch((e) => {
+					throw e
+				})
 			}
 		},
 		onLoad(res) {
 			_this = this
-			console.log(res.vid)
-			uni.request({
-				url: _this.apiServer + 'video/' + res.vid,
-				method: 'GET',
-				data: {},
-				success: res => {
-					_this.vInfo = res.data
-				},
-				fail: () => {},
-				complete: () => {}
-			})
-			this.vList = [
-				{
-					vid: 1,
-					title: '视频1',
-					uname: '作者',
-					img: '../../static/video/img1.jpg'
-				},
-				{
-					vid: 2,
-					title: '视频2',
-					uname: '作者',
-					img: '../../static/video/img2.jpg'
-				},
-				{
-					vid: 3,
-					title: '视频3',
-					uname: '作者',
-					img: '../../static/video/img3.png'
-				},
-				{
-					vid: 4,
-					title: '视频4',
-					uname: '作者',
-					img: '../../static/video/img4.jpg'
-				},
-				{
-					vid: 5,
-					title: '视频5',
-					uname: '作者',
-					img: '../../static/video/img5.jpg'
-				},
-				{
-					vid: 6,
-					title: '视频6',
-					uname: '作者',
-					img: '../../static/video/img6.jpg'
-				},
-				{
-					vid: 7,
-					title: '视频7',
-					uname: '作者',
-					img: '../../static/video/img7.jpg'
-				}
-			]
-			this.tags = ['233', 'awsl', '666', '木大木大木大木大', '前方高能', '欧拉欧拉欧拉欧拉']
+			const vid = res.vid
+			Promise.all([_this.getList(), _this.getVideo(vid), _this.getTags(vid)])
+				.then((res) => {
+					plus.nativeUI.toast('获取信息成功')
+				})
+				.catch((e) => {
+					console.log(e)
+					plus.nativeUI.toast(e)
+				})
 		},
 		onReady() {
 			this.videoContext = uni.createVideoContext('myVideo')
@@ -279,11 +324,16 @@
 			if(options.from === 'navigateBack'){
 				return false
 			}
+			inputView.hide()
 			//返回上一级
 			uni.navigateBack({
 				delta: 1
 			})
 			return true
+		},
+		onReachBottom(){
+			this.status = 'loading'
+			this.getList()
 		}
 	}
 </script>

@@ -43,7 +43,7 @@
             "style" : {}
         }
         ,{
-            "path" : "pages/chat/chat",
+            "path" : "pages/contact/contact",
             "style" : {}
         }
     ],
@@ -64,7 +64,7 @@
 				"text":"Home"
 			},
 			{
-				"pagePath":"pages/chat/chat",
+				"pagePath":"pages/contact/contact",
 				"iconPath":"static/tabBar/nav2.jpg",
 				"selectedIconPath":"static/tabBar/nav2-a.jpg",
 				"text":"Chat"

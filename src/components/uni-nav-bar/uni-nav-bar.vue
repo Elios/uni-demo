@@ -120,7 +120,8 @@
 		width: 100%;
 		height: 44px;
 		line-height: 44px;
-		font-size: 16px
+		font-size: 16px;
+		align-items: center;
 	}
 
 	.uni-navbar__header-btns {

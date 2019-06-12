@@ -24,8 +24,8 @@ Vue.prototype.checkLogin = (backPage) => {
 	return {uid}
 }
 
-Vue.prototype.apiServer = 'http://39.86.250.123:3000/api/'
-Vue.prototype.staticServer = 'http://39.86.250.123:3000'
+Vue.prototype.apiServer = 'http://c77b1dd0.ngrok.io/api/'
+Vue.prototype.staticServer = 'http://c77b1dd0.ngrok.io'
 
 App.mpType = 'app'
 
