@@ -8,27 +8,29 @@
 		}
         ,{
             "path" : "pages/me/me",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText":"Me"
+			}
         }
         ,{
             "path" : "pages/login/login",
             "style" : {
 				"backgroundColor":"#BBBBBB",
-				"navigationBarTitleText":"登录"
+				"navigationBarTitleText":"Login"
 			}
         },
 		{
 			"path":"pages/find-pwd/find-pwd",
 			"style":{
 				"backgroundColor":"#BBBBBB",
-				"navigationBarTitleText":"找回密码"
+				"navigationBarTitleText":"Found"
 			}
 		},
 		{
 			"path":"pages/reg/reg",
 			"style":{
 				"backgroundColor":"#BBBBBB",
-				"navigationBarTitleText":"注册"
+				"navigationBarTitleText":"Register"
 			}
 		},
 		{
@@ -44,6 +46,22 @@
         }
         ,{
             "path" : "pages/contact/contact",
+            "style" : {
+				"navigationBarTitleText":"Contact"
+			}
+        }
+        ,{
+            "path" : "pages/chat/chat",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/upload-video/upload-video",
+            "style" : {
+				"navigationBarTitleText":"Upload"
+			}
+        }
+        ,{
+            "path" : "pages/write/write",
             "style" : {}
         }
     ],

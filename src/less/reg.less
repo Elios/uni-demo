@@ -1,0 +1,43 @@
+@import './library';
+@import './common';
+
+@width: 200upx;
+@height: 200upx;
+
+.container{
+	#container();
+	padding: 0upx;
+	position: relative;
+	margin-top: 150upx;
+	.reg-avatar{
+		width: @width;
+		height: @height;
+		position: absolute;
+		top: calc(-@height * 3 / 5);
+		left: calc(50% - @height / 2);
+	}
+	.reg{
+		display: flex;
+		flex-direction: column;
+		padding: @padding;
+		view{
+			margin: @margin-ud;
+			color: @fontColor;
+			label{
+				font-size: @fontSize;
+			}
+			input{
+				border: @border-pink;
+				border-radius: @borderRadius;
+				padding: @padding-lr;
+			}
+		}
+		.reg-button{
+			button{
+				background-color: #e63995;
+				margin-top: 20upx; 
+				border-radius: @borderRadius;
+			}
+		}
+	}
+}

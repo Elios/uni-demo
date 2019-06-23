@@ -7,8 +7,9 @@
 			</view>
 		</uni-nav-bar>
 		<view class="">
-			<uni-collapse>
-				<!-- <uni-collapse-item v-for="item of cata" :title="item.name" :name="item.cid" :key="item.cid" @tap="clickCata(item.cid)">
+			<button type="primary" @tap="toHall">大厅</button>
+			<uni-collapse accordion="true">
+				<uni-collapse-item v-for="item of cata" :title="item.name" :name="item.cid" :key="item.cid" @tap="clickCata(item.cid)">
 					<view class="uni-list">
 						<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(item,index) in item.contacts" :key="index">
 							<view class="uni-media-list">
@@ -19,12 +20,7 @@
 							</view>
 						</view>
 					</view>
-				</uni-collapse-item> -->
-				<uni-collapse-item title="asdf">
-					<view class="">khgyug</view>
 				</uni-collapse-item>
-				<uni-collapse-item title="asdf">sdf</uni-collapse-item>
-				<uni-collapse-item title="asdf">ewf</uni-collapse-item>
 			</uni-collapse>
 		</view>
 	</view>
@@ -52,6 +48,16 @@
 			},
 			clickCata(cid){
 				
+			},
+			toHall(){
+				// const uid = uni.getStorageSync('uid')
+				const uid = 1
+				uni.navigateTo({
+					url: '../chat/chat?uid=' + uid,
+					success: res => {},
+					fail: () => {},
+					complete: () => {}
+				});
 			}
 		},
 		onLoad() {

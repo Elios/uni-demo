@@ -66,8 +66,28 @@ var dateUtils = {
 	}
 };
 
+const deepCopy = (obj) => {
+	let result = null
+	if(Array.isArray){
+		result = Array.isArray(obj) ? [] : {}
+	}else{
+		result = Object.prototype.toString.call(obj) === '[object Array]' ? [] : {}
+	}
+	for(let key in obj){
+		if(obj.hasOwnProperty(key)){
+			if(typeof obj[key] === 'object'){
+				result[key] = deepCopy(obj[key])
+			}else{
+				result[key] = obj[key]
+			}
+		}
+	}
+	return result
+}
+
 module.exports = {
 	formatTime: formatTime,
 	formatLocation: formatLocation,
-	dateUtils: dateUtils
+	dateUtils: dateUtils,
+	deepCopy: deepCopy
 }

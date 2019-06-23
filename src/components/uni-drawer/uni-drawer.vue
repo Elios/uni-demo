@@ -115,14 +115,15 @@
 
 	.uni-drawer__mask {
 		display: block;
-		opacity: 0;
+		/* opacity: 0.5; */
 		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0, 0, 0, .4);
-		transition: opacity .3s
+		/* background: rgba(0, 0, 0, .4); */
+		/* transition: opacity .3s; */
+		/* filter: blur(20px); */
 	}
 
 	.uni-drawer__content {

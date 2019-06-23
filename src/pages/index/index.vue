@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<uni-nav-bar :left-icon="navIcon" title="主页" @click-left="onClickLeft"></uni-nav-bar>
+		<uni-nav-bar left-icon="bars" title="主页" @click-left="onClickLeft" right-icon="upload" @click-right="onClickRight"></uni-nav-bar>
 		<uni-drawer :visible="showDrawer" @close="closeDrawer" mode="left">
 			<view style="padding:30upx;">
 				<uni-list>
@@ -9,15 +9,15 @@
 					<uni-list-item title="我的关注" note="sub"></uni-list-item>
 					<uni-list-item title="设置" note="setting"></uni-list-item>
 					<uni-list-item title="关于" note="about"></uni-list-item>
-					<uni-list-item title="登出" note="logout" v-if="login"></uni-list-item>
+					<uni-list-item title="登出" note="logout" v-if="login" @tap="toLogout"></uni-list-item>
 					<uni-list-item title="登录" note="login" v-else @tap="toLogin"></uni-list-item>
 					<uni-list-item title="退出" note="exit"></uni-list-item>
 				</uni-list>
 			</view>
 		</uni-drawer>
-		<view class="uni-page-head">
+		<view class="uni-page-head" :class="{'blur': blur}">
 			<uni-swiper-dot :info="bannerInfo" :current="current" :mode="mode" :dotsStyles="dotsStyles">
-				<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" @change="change" @tap="tapImg">
+				<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" @change="change" @tap="tapImg" circular>
 					<swiper-item v-for="item of bannerInfo" :key="item.vid">
 						<view class="swiper-item">
 							<image :src="item.poster" mode="" :data-vid="item.vid"></image>
@@ -26,7 +26,7 @@
 				</swiper>
 			</uni-swiper-dot>
 		</view>
-		<view class="vlist" @tap="tapImg">
+		<view class="vlist" @tap="tapImg" :class="{'blur': blur}">
 			<Preview v-for="(item, index) of vPreview" :key="index" :data-vid="item.vid" :imageUrl="item.poster" :title="item.title" :uname="item.uname" :c_time="item.c_time" class="preview"></Preview>
 			<uni-load-more :status="status" :content-text="contentText"></uni-load-more>
 		</view>
@@ -48,7 +48,6 @@
 		data() {
 			return {
 				showDrawer: false,
-				navIcon: 'bars',
 				vPreview: [],
 				mode: 'long',
 				bannerInfo: [],
@@ -65,7 +64,8 @@
 					contentnomore: '再怎么加载也没有了'
 				},
 				pageSize: 10,
-				reload: false
+				reload: false,
+				blur: false
 			}
 		},
 		methods: {
@@ -84,13 +84,26 @@
 			},
 			onClickLeft(){
 				this.showDrawer = true
+				this.blur = true
+			},
+			onClickRight(){
+				if(this.checkLogin('../index/index')){
+					uni.navigateTo({
+						url: '../upload-video/upload-video?uid' + uni.getStorageSync('uid'),
+						success: res => {},
+						fail: () => {},
+						complete: () => {}
+					});
+				}
 			},
 			toLogin(){
 				this.showDrawer = false
+				this.blur = false
 				this.checkLogin('../index/index')
 			},
 			closeDrawer(){
 				this.showDrawer = false
+				this.blur = false
 			},
 			getBanner(){
 				const p = myAxios({
@@ -120,6 +133,9 @@
 					throw e
 				})
 				return p
+			},
+			toLogout(){
+				this.logout('./index')
 			}
 		},
 		onPullDownRefresh: () => {
@@ -138,6 +154,7 @@
 		onBackPress: () => {
 			// 按下返回键时
 			if(_this.showDrawer){
+				_this.blur = false
 				_this.showDrawer = false
 				return true
 			}
@@ -146,9 +163,9 @@
 			_this = this
 			// 获取用户登录信息
 			const uid = uni.getStorageSync('uid')
-			const signature = uni.getStorageSync('signature')
 			const uname = uni.getStorageSync('uname')
-			if(uid && signature && uname){
+			console.log(uid, uname)
+			if(uid && uname){
 				this.login = true
 			}
 			Promise.all([_this.getBanner(), _this.getList()])
@@ -156,6 +173,7 @@
 					plus.nativeUI.toast('获取成功')
 				})
 				.catch((e) => {
+					_this.status = 'nomore'
 					plus.nativeUI.toast('获取视频信息失败')
 				})
 		},

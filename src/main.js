@@ -10,9 +10,9 @@ Vue.prototype.$axios = Axios
 
 Vue.prototype.checkLogin = (backPage) => {
 	const uid = uni.getStorageSync('uid')
-	const signature = uni.getStorageSync('signature')
+	// const signature = uni.getStorageSync('signature')
 	const uname = uni.getStorageSync('uname')
-	if(uid === '' || signature === '' || uname === ''){
+	if(uid === '' || uname === ''){
 		uni.navigateTo({
 			url: '../../pages/login/login?backPage='+backPage,
 			success: res => {},
@@ -21,11 +21,19 @@ Vue.prototype.checkLogin = (backPage) => {
 		})
 		return false
 	}
-	return {uid}
+	return {uid, uname}
 }
 
-Vue.prototype.apiServer = 'http://c77b1dd0.ngrok.io/api/'
-Vue.prototype.staticServer = 'http://c77b1dd0.ngrok.io'
+Vue.prototype.logout = (url) => {
+	uni.clearStorageSync()
+	uni.reLaunch({
+		url: url
+	})
+}
+
+Vue.prototype.apiServer = 'http://192.168.42.43:4000/api/'
+Vue.prototype.staticServer = 'http://192.168.42.43:4000/'
+Vue.prototype.chatServer = 'http://192.168.42.43:3000'
 
 App.mpType = 'app'
 

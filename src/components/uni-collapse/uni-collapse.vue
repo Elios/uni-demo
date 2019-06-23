@@ -1,40 +1,30 @@
 <template>
 	<view class="uni-collapse">
-		<slot></slot>
+		<slot />
 	</view>
 </template>
 <script>
 	export default {
-		name: 'uni-collapse',
+		name: 'UniCollapse',
 		props: {
-			accordion: { //是否开启手风琴效果
-				type: [Boolean, String],
+			accordion: { // 是否开启手风琴效果
+				type: Boolean,
 				default: false
 			}
 		},
 		data() {
 			return {}
 		},
-		mounted() {
-			let children = this.$children
-			let childrens = []
-			this.getChildren(children, childrens)
-			this.childrens = childrens
-			if (this.accordion === true || this.accordion === 'true') {
-				childrens.forEach((vm, index) => {
-					childrens.forEach((v, i) => {
-						if (index >= i) {
-							return
-						}
-						if (v.isOpen) {
-							vm.isOpen = false
-						}
-					})
-				})
+		provide() {
+			return {
+				collapse: this
 			}
 		},
+		created() {
+			this.childrens = []
+		},
 		methods: {
-			onChange(e) {
+			onChange() {
 				let activeItem = []
 				this.childrens.forEach((vm, index) => {
 					if (vm.isOpen) {
@@ -42,52 +32,44 @@
 					}
 				})
 				this.$emit('change', activeItem)
-			},
-			getChildren(arr, childrens) {
-				for (let i = 0, length = arr.length; i < length; i++) {
-					let name = arr[i].$options.name
-					if (name !== 'uni-collapse-item') {
-						arr[i].$children && this.getChildren(arr[i].$children, childrens)
-					} else {
-						childrens.push(arr[i])
-					}
-				}
 			}
 		}
 	}
 </script>
-<style lang="scss">
+<style>
+	@charset "UTF-8";
+
 	.uni-collapse {
-		background-color: $uni-bg-color;
+		background-color: #fff;
 		position: relative;
 		width: 100%;
 		display: flex;
-		flex-direction: column;
+		flex-direction: column
+	}
 
-		&:after {
-			position: absolute;
-			z-index: 10;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			height: 1px;
-			content: '';
-			-webkit-transform: scaleY(0.5);
-			transform: scaleY(0.5);
-			background-color: $uni-border-color;
-		}
+	.uni-collapse:after {
+		position: absolute;
+		z-index: 10;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		background-color: #c8c7cc
+	}
 
-		&:before {
-			position: absolute;
-			z-index: 10;
-			right: 0;
-			top: 0;
-			left: 0;
-			height: 1px;
-			content: '';
-			-webkit-transform: scaleY(0.5);
-			transform: scaleY(0.5);
-			background-color: $uni-border-color;
-		}
+	.uni-collapse:before {
+		position: absolute;
+		z-index: 10;
+		right: 0;
+		top: 0;
+		left: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		background-color: #c8c7cc
 	}
 </style>

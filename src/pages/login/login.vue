@@ -14,7 +14,7 @@
 				<view class="img">
 					<image style="width:27px;height: 27px;" :src="imgInfo.icon_user" />
 				</view>
-				<input type="text" v-model="username" placeholder="请输入用户账号">
+				<input type="text" v-model="formData.uname" placeholder="请输入用户账号">
 				<view class="img">
 					<image @tap="delUser" class="img_del" :src="imgInfo.icon_del" />
 				</view>
@@ -24,7 +24,7 @@
 				<view class="img">
 					<image style="width:20px;height: 25px;" :src="imgInfo.icon_pwd" />
 				</view>
-				<input :type="pwdType" :value="userpwd" @input="inputPwd" placeholder="请输入密码">
+				<input :type="pwdType" v-model="formData.pwd" placeholder="请输入密码">
 				<view class="img" @tap="switchPwd">
 					<image class="img_pwd_switch" :src="imgInfo.icon_pwd_switch" />
 				</view>
@@ -50,12 +50,15 @@
 </template>
 <script>
 	import Sign from '../../common/sign.js'
+	import myAxios from '../../common/myAxios.js'
 	let _this
 	export default {
 		data() {
 			return {
-				username: '',
-				userpwd: '',
+				formData:{
+					uname: '',
+					pwd: ''
+				},
 				pwdType: 'password',
 				imgInfo: {
 					head: require('@/static/head.png'),
@@ -71,53 +74,34 @@
 			}
 		},
 		methods: {
-			inputUsername(e) {
-				this.username = e.target.value
-			},
-			inputPwd(e) {
-				this.userpwd = e.target.value
-			},
 			delUser() {
-				this.username = ''
+				this.formData.uname = ''
 			},
 			switchPwd() {
 				this.pwdType = this.pwdType === 'text' ? 'password' : 'text'
 			},
 			login() {
-				const signature = Sign.sign(_this.apiServer)
-				console.log(_this.apiServer+'users/login')
-				uni.request({
+				myAxios({
 					url: _this.apiServer+'users/login',
 					method: 'POST',
-					header: {'Content-Type':'application/x-www-form-urlencoding;charset=utf-8'},
-					data: {
-						uname: _this.username,
-						pwd: _this.password,
-						sign: signature
-					},
-					success: res => {
-						uni.showToast({
-							title: '登录成功'
-						})
+					data: _this.formData
+				}).then((res) => {
+					if(res.statusCode === 200){
 						console.log(res)
-						uni.setStorageSync('uid', res.data.uid)
-						uni.setStorageSync('uname', res.data.uname)
-						uni.setStorageSync('signature', res.data.signature)
-						uni.navigateTo({
-							url: _this.backPage,
-							success: res => {},
-							fail: () => {},
-							complete: () => {}
-						});
-					},
-					fail: (e) => {
-						console.log(e)
-						uni.showToast({
-							title: '登录失败'
+						uni.setStorageSync('uid', res.data.result.uid)
+						uni.setStorageSync('uname', res.data.result.uname)
+						uni.setStorageSync('avatar', res.data.result.avatar)
+						plus.nativeUI.toast('登录成功')
+						uni.reLaunch({
+							url: '../index/index'
 						})
-					},
-					complete: () => {}
-				});
+					}else{
+						plus.nativeUI.toast('请检查用户名和密码是否正确')
+					}
+				}).catch((e) => {
+					plus.nativeUI.toast('登录失败，请稍后再试')
+					console.log(e)
+				})
 			},
 			findPwd() {
 				uni.navigateTo({
@@ -139,7 +123,7 @@
 		},
 		onBackPress(){
 			uni.navigateTo({
-				url: _this.backPage,
+				url: '../index/index',
 				success: res => {},
 				fail: () => {},
 				complete: () => {}

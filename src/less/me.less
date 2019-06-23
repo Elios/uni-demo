@@ -1,0 +1,42 @@
+@import './common';
+@import './library';
+
+@avatarSize: 200upx;
+
+.me{
+	color: @fontColor;
+	.me-me{
+		background-color: #f0f8ff;
+		position: relative;
+		top: -200upx;
+		margin: 0upx 40upx;
+		padding: @padding;
+		border: @border;
+		border-radius: 30upx;
+		.me-avatar{
+			position: absolute;
+			left: calc(50% - @avatarSize / 2);
+			top: calc(-@avatarSize / 2);
+			.avatar{
+				width: @avatarSize;
+				height: @avatarSize;
+				border-radius: @avatarSize;
+			}
+		}
+		.me-info{
+			margin-top: calc(@avatarSize / 3);
+			display: flex;
+			flex-direction: column;
+			.info-live{
+				margin-top: 10upx;
+				height: 600upx;
+				border: 1upx solid rgba(0, 0, 0, .3);
+				border-radius: 20upx;
+				background-color: #FFFFFF;
+			}
+		}
+	}
+}
+
+
+

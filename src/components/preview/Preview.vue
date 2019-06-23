@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<view class="img">
-			<image :src="imageUrl"></image>
+			<image :src="imageUrl" lazy-load></image>
 		</view>
 		<view class="des">
 			<view class="title">
